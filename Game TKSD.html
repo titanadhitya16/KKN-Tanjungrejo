@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Internet Aman</title>
+<style>
+  :root{
+    --cream:#FFF8EC;
+    --green:#2F5D3A;
+    --green-dark:#1E3F27;
+    --gold:#F0A93E;
+    --gold-dark:#C9821C;
+    --red:#D9534F;
+    --ink:#2B2B2B;
+    --card:#FFFFFF;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'Comic Sans MS','Trebuchet MS',sans-serif;
+    background:radial-gradient(circle at top, #FFFDF6, var(--cream));
+    color:var(--ink);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    padding:20px 12px 60px;
+  }
+  .wrap{width:100%;max-width:640px;}
+  header{
+    text-align:center;
+    margin-bottom:16px;
+  }
+  .badge{
+    display:inline-block;
+    background:var(--green);
+    color:#fff;
+    padding:6px 18px;
+    border-radius:999px;
+    font-size:13px;
+    letter-spacing:1px;
+    margin-bottom:10px;
+  }
+  h1{
+    font-size:28px;
+    color:var(--green-dark);
+    margin:6px 0;
+  }
+  .sub{color:#6b6b6b;font-size:15px;margin:0;}
+  .hud{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:var(--card);
+    border-radius:16px;
+    padding:12px 18px;
+    margin:18px 0;
+    box-shadow:0 4px 0 #e8dcc0;
+    border:3px solid var(--gold);
+  }
+  .hud div{text-align:center;}
+  .hud .num{font-size:22px;font-weight:bold;color:var(--green-dark);}
+  .hud .lbl{font-size:11px;color:#888;text-transform:uppercase;}
+  .progress-bar{
+    height:14px;
+    background:#eee2c4;
+    border-radius:999px;
+    overflow:hidden;
+    margin-bottom:20px;
+    border:2px solid var(--gold);
+  }
+  .progress-fill{
+    height:100%;
+    background:linear-gradient(90deg,var(--gold),var(--gold-dark));
+    width:0%;
+    transition:width .4s ease;
+  }
+  .card{
+    background:var(--card);
+    border-radius:22px;
+    padding:26px 22px;
+    box-shadow:0 6px 0 #e8dcc0;
+    border:3px solid var(--green);
+    text-align:center;
+    animation:pop .3s ease;
+  }
+  @keyframes pop{from{transform:scale(.92);opacity:0;}to{transform:scale(1);opacity:1;}}
+  .scene-emoji{font-size:64px;margin-bottom:6px;}
+  .scene-text{
+    font-size:19px;
+    line-height:1.5;
+    margin:10px 0 22px;
+    color:var(--ink);
+    font-weight:bold;
+  }
+  .choices{
+    display:flex;
+    gap:14px;
+    justify-content:center;
+    flex-wrap:wrap;
+  }
+  button.choice{
+    flex:1;
+    min-width:130px;
+    padding:18px 10px;
+    font-size:17px;
+    font-weight:bold;
+    border-radius:16px;
+    border:3px solid var(--green);
+    background:#EFF7EE;
+    color:var(--green-dark);
+    cursor:pointer;
+    font-family:inherit;
+    transition:transform .12s ease, background .12s ease;
+  }
+  button.choice:hover{transform:translateY(-3px);background:#DFF0DD;}
+  button.choice:active{transform:translateY(0);}
+  button.choice.bad{border-color:var(--red);background:#FCECEB;color:#8a2e2b;}
+  .feedback{
+    margin-top:20px;
+    padding:16px;
+    border-radius:14px;
+    font-size:16px;
+    font-weight:bold;
+    display:none;
+  }
+  .feedback.show{display:block;animation:pop .3s ease;}
+  .feedback.correct{background:#E4F3E1;color:var(--green-dark);border:2px solid var(--green);}
+  .feedback.wrong{background:#FBE6E5;color:#8a2e2b;border:2px solid var(--red);}
+  .next-btn{
+    margin-top:16px;
+    padding:12px 30px;
+    font-size:16px;
+    border-radius:999px;
+    border:none;
+    background:var(--gold-dark);
+    color:#fff;
+    font-weight:bold;
+    cursor:pointer;
+    font-family:inherit;
+  }
+  .stars{margin-top:6px;font-size:22px;}
+  .final{
+    text-align:center;
+    padding:30px 20px;
+  }
+  .final .big-emoji{font-size:80px;}
+  .final h2{color:var(--green-dark);font-size:26px;}
+  .final p{font-size:16px;color:#555;}
+  .restart{
+    margin-top:18px;
+    padding:14px 34px;
+    font-size:16px;
+    border-radius:999px;
+    border:none;
+    background:var(--green);
+    color:#fff;
+    font-weight:bold;
+    cursor:pointer;
+    font-family:inherit;
+  }
+  .medal-row{display:flex;justify-content:center;gap:8px;margin:16px 0;font-size:30px;}
+  footer{text-align:center;margin-top:30px;font-size:12px;color:#a89b7a;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="badge">MINI GAME · KKN 20 USH</span>
+    <h1>🕵️ Detektif Internet Aman</h1>
+    <p class="sub">Detektif Cilik memilih tindakan yang tepat!</p>
+  </header>
+
+  <div class="hud">
+    <div><div class="num" id="scoreNum">0</div><div class="lbl">Bintang</div></div>
+    <div><div class="num" id="questionNum">1/10</div><div class="lbl">Soal</div></div>
+    <div><div class="num" id="streakNum">0</div><div class="lbl">Beruntun</div></div>
+  </div>
+
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+  <div id="gameArea"></div>
+
+  <footer>KKN Tematik Informatika (IT) · Desa Tanjungrejo</footer>
+</div>
+
+<script>
+const scenarios = [
+  {emoji:"📱", text:"Ada teman baru di game online minta alamat rumahmu supaya bisa 'kirim hadiah'. Apa yang kamu lakukan?",
+   choices:[{t:"Kasih tau alamatku, biar dapat hadiah!", correct:false, why:"Alamat rumah itu rahasia pribadi. Orang di internet yang minta alamat bisa berbahaya, walau ngaku mau kasih hadiah."},
+            {t:"Tolak, dan cerita ke orang tua", correct:true, why:"Betul! Kita tidak boleh kasih alamat rumah ke orang yang baru kenal di internet. Selalu cerita ke orang tua kalau ada yang aneh."}]},
+  {emoji:"🎁", text:"Muncul tulisan besar 'SELAMAT!! KAMU MENANG HP BARU GRATIS! KLIK DI SINI SEKARANG!' Apa yang kamu lakukan?",
+   choices:[{t:"Klik cepat sebelum hilang!", correct:false, why:"Hati-hati! Tulisan seperti ini biasanya jebakan (tipuan) untuk mencuri data kita. Kalau menang beneran, biasanya tidak muncul tiba-tiba begitu."},
+            {t:"Tidak diklik, dan tanya ke orang tua dulu", correct:true, why:"Pintar! Tawaran hadiah yang tiba-tiba dan mendesak biasanya adalah jebakan/penipuan."}]},
+  {emoji:"👻", text:"Ada pesan berantai di grup WhatsApp keluarga: 'Awas! Hantu berkeliaran di sekolah kita malam ini, sebarkan ke semua orang sekarang juga!' tanpa foto atau bukti jelas. Apa yang kamu lakukan?",
+   choices:[{t:"Langsung forward ke semua teman biar semua tahu", correct:false, why:"Pesan tanpa bukti jelas bisa jadi kabar bohong (hoaks). Kalau langsung disebar, bisa bikin orang lain takut padahal belum tentu benar."},
+            {t:"Tanya dulu ke orang tua atau guru, baru percaya", correct:true, why:"Tepat sekali! Sebelum percaya dan menyebarkan kabar, kita harus tanya dulu ke orang dewasa yang kita percaya."}]},
+  {emoji:"🔑", text:"Teman sekelasmu minta password akun game-mu supaya bisa main bareng. Apa yang kamu lakukan?",
+   choices:[{t:"Kasih saja, kan teman sendiri", correct:false, why:"Password itu rahasia pribadi, walau ke teman sekalipun sebaiknya tidak dibagikan. Orang lain bisa menyalahgunakan akun kita."},
+            {t:"Tidak dikasih, cukup main bareng tanpa share password", correct:true, why:"Benar! Password sebaiknya cuma kita dan orang tua yang tahu, supaya akun kita aman."}]},
+  {emoji:"😢", text:"Kamu sudah main HP dari jam 3 sore, sekarang sudah jam 9 malam dan matamu mulai pedih. Apa yang sebaiknya kamu lakukan?",
+   choices:[{t:"Terus main sampai ngantuk sendiri", correct:false, why:"Main gadget kelamaan bikin mata lelah dan susah bangun pagi buat sekolah. Tubuh kita perlu istirahat."},
+            {t:"Berhenti, istirahatkan mata, dan siap-siap tidur", correct:true, why:"Bagus! Main gadget itu boleh, tapi harus ada batas waktunya supaya badan tetap sehat."}]},
+  {emoji:"📸", text:"Orang yang baru kenal di internet minta foto kamu pakai baju seragam sekolah. Apa yang kamu lakukan?",
+   choices:[{t:"Kirim saja, kan cuma foto biasa", correct:false, why:"Hati-hati, foto pakai seragam bisa menunjukkan nama sekolah kita ke orang yang tidak dikenal. Ini berbahaya."},
+            {t:"Tidak dikirim, dan cerita ke orang tua", correct:true, why:"Tepat! Jangan kirim foto ke orang asing di internet, apalagi yang menunjukkan sekolah atau alamat kita."}]},
+  {emoji:"🐘", text:"Kamu lihat foto 'gajah terbang' yang kelihatan aneh dan tidak masuk akal, tapi banyak yang share. Menurutmu ini apa?",
+   choices:[{t:"Pasti asli, kan banyak yang share", correct:false, why:"Banyak yang share bukan berarti itu benar! Foto seperti ini biasanya hasil edit/rekayasa aplikasi."},
+            {t:"Kemungkinan hasil edit / rekayasa, bukan asli", correct:true, why:"Betul sekali! Kalau sesuatu terlihat tidak masuk akal, kemungkinan besar itu hasil editan, bukan kejadian nyata."}]},
+  {emoji:"👀", text:"Ada orang tidak dikenal di internet mengajak ketemuan langsung. Apa yang kamu lakukan?",
+   choices:[{t:"Setuju, penasaran ingin ketemu", correct:false, why:"Bahaya! Kita tidak pernah tahu siapa sebenarnya orang di balik akun internet. Jangan pernah setuju ketemuan sendirian."},
+            {t:"Menolak dan langsung cerita ke orang tua", correct:true, why:"Sangat tepat! Ajakan ketemuan dari orang tidak dikenal di internet harus langsung dilaporkan ke orang tua/guru."}]},
+  {emoji:"📝", text:"Kamu butuh info tambahan untuk tugas sekolah tentang hewan langka. Apa yang sebaiknya kamu lakukan?",
+   choices:[{t:"Cari di internet dengan didampingi orang tua/kakak", correct:true, why:"Bagus! Internet bisa sangat membantu belajar, asal dipakai dengan bimbingan orang dewasa."},
+            {t:"Tidak usah cari, males ah", correct:false, why:"Sebenarnya internet itu bermanfaat untuk belajar, lho! Asal dipakai dengan didampingi orang tua/guru."}]},
+  {emoji:"💬", text:"Kamu melihat sesuatu yang menakutkan dan aneh muncul di layar HP saat sedang main. Apa yang kamu lakukan?",
+   choices:[{t:"Diam saja, takut dimarahi kalau cerita", correct:false, why:"Jangan takut cerita! Orang tua dan guru justru akan membantu kalau kita jujur cerita."},
+            {t:"Langsung cerita ke orang tua atau guru", correct:true, why:"Tepat sekali! Selalu cerita kalau ada yang aneh atau menakutkan, orang tua/guru pasti akan membantu."}]},
+];
+
+let idx = 0, score = 0, streak = 0;
+const gameArea = document.getElementById("gameArea");
+const scoreNum = document.getElementById("scoreNum");
+const questionNum = document.getElementById("questionNum");
+const streakNum = document.getElementById("streakNum");
+const progressFill = document.getElementById("progressFill");
+
+function renderScenario(){
+  const s = scenarios[idx];
+  questionNum.textContent = `${idx+1}/${scenarios.length}`;
+  progressFill.style.width = `${(idx/scenarios.length)*100}%`;
+
+  const shuffled = [...s.choices];
+  gameArea.innerHTML = `
+    <div class="card">
+      <div class="scene-emoji">${s.emoji}</div>
+      <div class="scene-text">${s.text}</div>
+      <div class="choices" id="choicesWrap">
+        ${shuffled.map((c,i)=>`<button class="choice" data-i="${i}">${c.t}</button>`).join("")}
+      </div>
+      <div class="feedback" id="feedback"></div>
+    </div>
+  `;
+
+  document.querySelectorAll(".choice").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const chosen = shuffled[parseInt(btn.dataset.i)];
+      document.querySelectorAll(".choice").forEach(b=>b.disabled=true);
+      const fb = document.getElementById("feedback");
+      if(chosen.correct){
+        score++; streak++;
+        btn.style.background = "#CFE9C9";
+        fb.className = "feedback show correct";
+        fb.innerHTML = `⭐ Benar! ${chosen.why}<br><button class="next-btn" onclick="nextScenario()">${idx<scenarios.length-1?'Lanjut →':'Lihat Hasil 🏆'}</button>`;
+      } else {
+        streak = 0;
+        btn.classList.add("bad");
+        fb.className = "feedback show wrong";
+        fb.innerHTML = `❌ Belum tepat. ${chosen.why}<br><button class="next-btn" onclick="nextScenario()">${idx<scenarios.length-1?'Lanjut →':'Lihat Hasil 🏆'}</button>`;
+      }
+      scoreNum.textContent = score;
+      streakNum.textContent = streak;
+    });
+  });
+}
+
+function nextScenario(){
+  idx++;
+  if(idx >= scenarios.length){
+    showFinal();
+  } else {
+    renderScenario();
+  }
+}
+
+function showFinal(){
+  progressFill.style.width = "100%";
+  let medal, msg;
+  if(score >= 9){medal="🏆"; msg="Luar biasa! Kamu Detektif Cilik Ahli Internet Aman!";}
+  else if(score >= 6){medal="🥈"; msg="Bagus sekali! Sedikit lagi jadi ahli!";}
+  else {medal="🥉"; msg="Terus belajar ya, kamu pasti bisa jadi ahli!";}
+
+  gameArea.innerHTML = `
+    <div class="card final">
+      <div class="big-emoji">${medal}</div>
+      <h2>Permainan Selesai!</h2>
+      <div class="medal-row">${"⭐".repeat(score)}</div>
+      <p><strong>${score} dari ${scenarios.length}</strong> jawaban benar</p>
+      <p>${msg}</p>
+      <button class="restart" onclick="restart()">Main Lagi</button>
+    </div>
+  `;
+}
+
+function restart(){
+  idx=0; score=0; streak=0;
+  scoreNum.textContent=0; streakNum.textContent=0;
+  renderScenario();
+}
+
+renderScenario();
+</script>
+</body>
+</html>
